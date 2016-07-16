@@ -6,4 +6,4 @@ jspm_packages/
 bower_components/
 .idea/
 target/*
-Vagrant/.vagrant/*
+Vagrant/.vagrant
