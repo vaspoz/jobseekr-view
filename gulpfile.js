@@ -6,18 +6,9 @@ var connect = require('gulp-connect');
 gulp.task('connect', function () {
     "use strict";
     connect.server({
-        root: 'target',
+        root: './',
         port: 3000
     });
-});
-
-// If html change, copy it to 'target'
-gulp.task('html-watch', function () {
-    "use strict";
-    gulp.src('src/*.html')
-        .pipe(watch('src/*.html', {usePolling: true}))
-        .pipe(gulp.dest('target'))
-        .pipe(connect.reload());
 });
 
 // If js change, compile it using babel:
@@ -32,4 +23,4 @@ gulp.task('js-watch', function () {
         .pipe(connect.reload());
 });
 
-gulp.task('default', ['connect', 'html-watch', 'js-watch']);
+gulp.task('default', ['connect', 'js-watch']);
