@@ -1,29 +1,35 @@
-const gulp = require('gulp');
-const HubRegistry = require('gulp-hub');
-const browserSync = require('browser-sync');
+var gulp = require('gulp');
+var babel = require('gulp-babel');
+var watch = require('gulp-watch');
+var connect = require('gulp-connect');
 
-const conf = require('./conf/gulp.conf');
+gulp.task('connect', function () {
+    "use strict";
+    connect.server({
+        root: 'target',
+        port: 3000
+    });
+});
 
-// Load some files into the registry
-const hub = new HubRegistry([conf.path.tasks('*.js')]);
+// If html change, copy it to 'target'
+gulp.task('html-watch', function () {
+    "use strict";
+    gulp.src('src/*.html')
+        .pipe(watch('src/*.html', {usePolling: true}))
+        .pipe(gulp.dest('target'))
+        .pipe(connect.reload());
+});
 
-// Tell gulp to use the tasks just loaded
-gulp.registry(hub);
+// If js change, compile it using babel:
+// 1. ES6 -> ES5
+// 2. JSX -> JS
+gulp.task('js-watch', function () {
+    "use strict";
+    return gulp.src('src/**/*.js*')
+        .pipe(watch('src/**/*.js*', {usePolling: true}))
+        .pipe(babel())
+        .pipe(gulp.dest('target'))
+        .pipe(connect.reload());
+});
 
-gulp.task('build', gulp.series(gulp.parallel('other', 'webpack:dist')));
-gulp.task('test', gulp.series('karma:single-run'));
-gulp.task('test:auto', gulp.series('karma:auto-run'));
-gulp.task('serve', gulp.series('webpack:watch', 'watch', 'browsersync'));
-gulp.task('serve:dist', gulp.series('default', 'browsersync:dist'));
-gulp.task('default', gulp.series('clean', 'build'));
-gulp.task('watch', watch);
-
-function reloadBrowserSync(cb) {
-  browserSync.reload();
-  cb();
-}
-
-function watch(done) {
-  gulp.watch(conf.path.tmp('index.html'), reloadBrowserSync);
-  done();
-}
+gulp.task('default', ['connect', 'html-watch', 'js-watch']);
