@@ -12,9 +12,9 @@ sudo apt-get install -y git
 echo 'bin-links=false' > .npmrc
 
 # Building
-cd /home/vagrant/shared/ && sudo npm install
+cd /home/vagrant/shared/ && sudo npm install --no-bin-links || sudo npm install
 sudo npm cache clear
 sudo npm install -g gulp-cli
 
 # Run application
-cd /home/vagrant/shared/ && npm run serve
+cd /home/vagrant/shared/ && gulp
