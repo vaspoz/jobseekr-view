@@ -7,14 +7,19 @@ sed -i.bak 's/\#force_color_prompt=yes/force_color_prompt=yes/' /home/vagrant/.b
 sudo apt-get update -y
 curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
 sudo apt-get install -y nodejs
+
+# Use npm global installs without sudo
+mkdir ~/.npm-global
+npm config set prefix '~/.npm-global'
+echo 'bin-links=false' >> .npmrc
+echo 'export PATH=~/.npm-global/bin:$PATH' >> .profile
+source ~/.profile
+
 sudo npm install -g npm
 sudo apt-get install -y git
-echo 'bin-links=false' > .npmrc
 
 # Building
-cd /home/vagrant/shared/ && sudo npm install --no-bin-links || sudo npm install
+cd /home/vagrant/shared/ && sudo npm install || sudo npm install
 sudo npm cache clear
-sudo npm install -g gulp-cli
 
 # Run application
-cd /home/vagrant/shared/ && gulp
